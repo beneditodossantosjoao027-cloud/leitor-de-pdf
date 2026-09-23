@@ -1,13 +1,15 @@
 # Leitor de PDF com IA
 
-Programa em Python que **lê o texto de um PDF e usa uma IA (Gemini) para responder perguntas sobre o conteúdo dele** — no exemplo pronto, ele lê um currículo e diz qual é a formação e quais tecnologias o candidato sabe.
+Programa em Python que **lê o texto de um PDF e usa uma IA (Gemini) para responder perguntas sobre o conteúdo dele** — funciona com currículo, contrato, apostila, ou qualquer PDF que tenha texto.
 
 ## O que ele faz
 
-1. Abre um arquivo PDF do seu computador
-2. Extrai todo o texto que está dentro dele
-3. Envia esse texto pra uma IA (Gemini), junto com uma pergunta
-4. Mostra a resposta da IA no terminal
+1. Procura sozinho os arquivos PDF que estão na mesma pasta do script
+2. Se houver mais de um, pergunta qual você quer usar
+3. Extrai todo o texto do PDF escolhido
+4. Pergunta a você, no terminal, o que quer saber sobre o documento
+5. Envia o texto + sua pergunta pra uma IA (Gemini)
+6. Mostra a resposta da IA no terminal
 
 Se uma chave de API travar por limite de uso (cota), o programa troca sozinho pra próxima chave/modelo disponível, sem parar de funcionar.
 
@@ -33,48 +35,27 @@ setx GEMINI_KEY_1 "SUA_CHAVE_AQUI"
 
 > Você pode cadastrar até 10 chaves diferentes (`GEMINI_KEY_1` até `GEMINI_KEY_10`, repetindo o comando `setx` pra cada uma), assim, se uma bater o limite de uso, o programa troca pra próxima sozinho. Ter só a `GEMINI_KEY_1` já é suficiente pra funcionar.
 
-## Como colocar o caminho do PDF (a parte que mais gera dúvida)
+## Como usar (agora ficou bem mais fácil)
 
-No código, essa linha decide qual PDF vai ser lido:
+Não precisa mais editar o código pra colocar o caminho do PDF nem a pergunta. É só isso:
 
-```python
-caminho = r"caminho.pdf"
-```
-
-Troque `caminho.pdf` pelo caminho completo do seu arquivo. As regras são:
-
-1. **Sempre deixe o `r` antes das aspas.** Ele existe porque o Windows usa barra invertida (`\`) pra separar pastas, e sem o `r` o Python pode interpretar partes do caminho errado (por exemplo `\n` viraria quebra de linha em vez de fazer parte do nome da pasta).
-2. **Copie o caminho certo do seu PDF:** no Windows, clique com o botão direito no arquivo → "Copiar como caminho" (ou segure Shift, clique com botão direito → "Copiar como caminho").
-3. **Cole exatamente como veio**, mantendo o `r` e as aspas.
-
-Exemplo real, igual ao caminho que você já usa:
-```python
-caminho = r"C:\Users\bened\OneDrive\Desktop\git hub\seupdf.pdf"
-```
-
-## Como usar
-
-1. Ajuste a linha do `caminho` como explicado acima, apontando pro PDF que você quer analisar.
-2. (Opcional) Troque a pergunta feita à IA, editando esta linha perto do final do arquivo:
-```python
-pergunta = f"Aqui está o conteúdo de um documento:\n\n{txt}\n\nCom base nesse documento, responda: faca sua pergunta aqui."
-```
-Você pode trocar o texto depois de "responda:" pra qualquer outra pergunta sobre o PDF.
-
-3. Rode o programa:
+1. Coloque o arquivo `.pdf` que você quer analisar **na mesma pasta** onde está o script `leitor_de_pdf_com_ia.py`.
+2. Rode o programa:
 ```bash
 python "leitor_de_pdf_com_ia.py"
 ```
-4. A resposta da IA aparece direto no terminal.
+3. Se houver só um PDF na pasta, ele já usa esse automaticamente. Se houver mais de um, o programa lista todos e pergunta qual número você quer usar.
+4. Digite sua pergunta quando ele pedir, por exemplo:
+```
+O que você quer perguntar sobre esse PDF? qual é a formação do candidato?
+```
+5. A resposta da IA aparece direto no terminal.
 
-## Erros comuns
-
-- **"Nenhuma chave Gemini encontrada"** → você não configurou a variável de ambiente `GEMINI_KEY_1` corretamente, ou não reabriu o terminal depois de configurar.
-- **Erro ao abrir o PDF / arquivo não encontrado** → o caminho na linha `caminho = r"..."` está errado ou o `r` foi removido sem querer.
+Quer perguntar outra coisa sobre o mesmo PDF? É só rodar o programa de novo e digitar uma pergunta diferente — não precisa mexer em nada no código.
 
 ## Segurança
 
-O programa só lê o PDF que você indicar no seu próprio computador e envia o texto extraído pra API do Gemini pra gerar a resposta — nenhum arquivo é enviado pra nenhum outro lugar, e a chave de API fica só na sua máquina (nunca escrita no código).
+O programa só lê o PDF que está na mesma pasta dele no seu computador e envia o texto extraído pra API do Gemini pra gerar a resposta — nenhum arquivo é enviado pra nenhum outro lugar, e a chave de API fica só na sua máquina (nunca escrita no código).
 
 ## Autor
 
