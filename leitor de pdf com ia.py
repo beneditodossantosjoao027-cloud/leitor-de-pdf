@@ -72,15 +72,42 @@ def chamar_gemini(payload, timeout=40, max_tentativas=None):
 
     print("[COTA] Todos os combos chave+modelo esgotaram por agora.")
     return None
-caminho =r"caminho.pdf"
-txt=""
+import glob
+
+# Procura todos os PDFs na mesma pasta onde este script está salvo
+pasta_do_script = os.path.dirname(os.path.abspath(__file__))
+pdfs_encontrados = sorted(glob.glob(os.path.join(pasta_do_script, "*.pdf")))
+
+if not pdfs_encontrados:
+    print("[ERRO] Nenhum PDF encontrado na mesma pasta deste script.")
+    print(f"Coloque um arquivo .pdf dentro de: {pasta_do_script}")
+    exit()
+
+if len(pdfs_encontrados) == 1:
+    caminho = pdfs_encontrados[0]
+    print(f"[INFO] Usando o arquivo: {os.path.basename(caminho)}")
+else:
+    print("PDFs encontrados na pasta:")
+    for i, arquivo in enumerate(pdfs_encontrados, start=1):
+        print(f"{i} - {os.path.basename(arquivo)}")
+
+    while True:
+        escolha = input("Qual você quer usar? (digite o número): ").strip()
+        if escolha.isdigit() and 1 <= int(escolha) <= len(pdfs_encontrados):
+            caminho = pdfs_encontrados[int(escolha) - 1]
+            break
+        print("Número inválido, tenta de novo.")
+
+txt = ""
 with pdfplumber.open(caminho) as pdf:
     for i, pg in enumerate(pdf.pages):
-        texto=pg.extract_text()
+        texto = pg.extract_text()
         if texto:
-            txt+=texto
+            txt += texto
 
-pergunta = f"Aqui está o conteúdo de um documento:\n\n{txt}\n\npergunte oque quiser?"
+pergunta_usuario = input("O que você quer perguntar sobre esse PDF? ")
+
+pergunta = f"Aqui está o conteúdo de um documento:\n\n{txt}\n\nCom base nesse documento, responda: {pergunta_usuario}"
 payload = {"contents": [{"parts": [{"text": pergunta}]}]}
 resposta = chamar_gemini(payload)
 print(resposta)
